@@ -1,0 +1,12 @@
+devices during past 7d
+| where hardware.manufacturer == "hewlett-packard"
+| where hardware.type != virtual
+   and hardware.type in [laptop, desktop]
+   and name in ["alusfw-w*", "alusfw-l*"]
+   and name !in ["alusfw-wl*", "alusfw-ll*", "alusfw-wd*","alusfw-Ld*", "alusfw-wr*", "alusfw-lr*", "alusfw-wt*", "alusfw-lt*","alusfw-wi*","alusfw-li*"]
+   and hardware.model !in ["*zbook*", "*elite x2*", "*x360*"]
+   and name !in ["ALUSFW-L30176","ALUSFW-L32593","ALUSFW-L27396","ALUSFW-L30683","ALUSFW-L33736","ALUSFW-L33067","ALUSFW-L32342","ALUSFW-L27650","ALUSFW-L34319","ALUSFW-L34317","ALUSFW-L31244","ALUSFW-L32848","ALUSFW-L29730","ALUSFW-L29109","ALCHVE-MHT9447M","ALUSFW-L31339","ALCHVE-L00294","ALUSFW-L34812","ALUSFW-L31101","ALUSFW-L29060","ALUSFW-L31518","ALUSFW-L31361","ALUSFW-L31348","ALUSFW-L34318","ALUSFW-L29732","ALUSFW-L31541","ALUSFW-L34004","ALUSFW-MDVJMGIK"]
+/*ELT*/
+| include device_performance.events during past 7d
+| compute sys_drive_space_ = system_drive_free_space.avg(), total_devices_ = device.name.count()
+| summarize devices_with_low_disk_space_ = name.countif(sys_drive_space_ < 10GB), total_devices_count_ = total_devices_.sum()
